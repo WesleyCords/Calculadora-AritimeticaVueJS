@@ -1,62 +1,65 @@
 <script setup>
-  import { reactive } from 'vue';
+  import { reactive, watch } from 'vue';
 
-  let estado = reactive({
+  const estado = reactive({
     operacao: '-',
-    numero1: 21,
-    numero2: 2,
+    num1: 0,
+    num2: 0,
     resultado: 0
   });
 
+  const getNumeroOne = ev => estado.num1 = Number(ev.target.value);
+  const getNumeroTwo = ev => estado.num2 = Number(ev.target.value);
   const mudaOperacao = ev => estado.operacao = ev.target.value;
+  
 
-  if (estado.operacao === '-') {
-    estado.resultado = estado.numero1 - estado.numero2;
-  }
-
-  const getNumeroOne = ev => estado.numero1 = Number(ev.target.value);
-  const getNumeroTwo = ev => estado.numero2 = Number(ev.target.value);
-
-
-  switch (estado.operacao) {
+  watch( () => [estado.operacao, estado.num1, estado.num2], () => {
+    switch (estado.operacao) {
     case '+':
-      estado.resultado = estado.numero1 + estado.numero2;
+      estado.resultado = estado.num1 + estado.num2;
       break;
     case '-':
-      estado.resultado = estado.numero1 - estado.numero2;
+      estado.resultado = estado.num1 - estado.num2;
       break;
     case 'x':
-      estado.resultado = estado.numero1 * estado.numero2;
+      estado.resultado = estado.num1 * estado.num2;
       break;
     case '/':
-      estado.resultado = estado.numero2 !== 0 ? estado.numero1 / estado.numero2 : 'Erro: Divisão por zero';
+      estado.resultado = estado.num2 !== 0 ? estado.num1 / estado.num2 : 'Erro: Divisão por zero';
       break;
-  };
+    default: 
+      estado.resultado = 0;
+    }
+  }, {immediate: true});
 
 </script>
 
 <template>
   <div class="container">
-    <h1>Calcularadora Aritimetica</h1>
-    <div class="input-num1">
+    <header>
+      <h1>Calcularadora Aritimetica</h1>
+    </header>
+    <div class="grupo-input">
       <label for="num1">Primeiro Número</label>
-      {{ estado.numero1 }}
       <input type="number" id="num1" placeholder="Digite aqui o número" @keyup="getNumeroOne">
     </div>
-    <select @change="mudaOperacao">
-      <option value="-">Subtração</option>
-      <option value="+">Sumando</option>
-      <option value="x">Mutiplicação</option>
-      <option value="/">Divisão</option>
-    </select>
-    {{ estado.operacao }}
-      <div class="input-num2">
+    <div class="set-operacao">
+      <select @change="mudaOperacao" :value="estado.operacao">
+        <option value="-">Subtração</option>
+        <option value="+">Adição</option>
+        <option value="x">Mutiplicação</option>
+        <option value="/">Divisão</option>
+      </select>
+      <div class="view-operacao">
+        Operação selecionada: {{ estado.operacao }}
+      </div>
+    </div>
+    <div class="grupo-input">
       <label for="num1">Segundo Número</label>
       <input type="number" id="num2" placeholder="Digite aqui o número" @keyup="getNumeroTwo">
-      {{ estado.numero2 }}
     </div>
     <h2>Resultado</h2>
-    <span>{{ estado.resultado }}</span>
+    <span :class="{ 'erro': typeof estado.resultado === 'string' }"> {{ estado.resultado }}</span>
   </div>
 </template>
 
@@ -70,34 +73,53 @@
 .container {
   background:  #1a2a6c;
   max-width: 450px;
-  min-height: 70vh;
-  margin: 50px auto;
-  padding: 30px 40px;
+  margin: 10px auto;
+  padding: 15px 20px;
   border-radius: 20px;
   color: #f5f5f5;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
+
+.grupo-input,
+.set-operacao {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.view-operacao {
+  text-align: center;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
 input,
 select {
   display: block;
   width: 100%;
-  padding: 5px 20px;
+  padding: 8px 20px;
   border: 2px solid #546cc9;
   outline: none;
   cursor: pointer;
-}
+  font-size: 1rem;
+} 
+
 h1,
 h2,
 span {
   text-align: center;
 }
+
+h1 {
+  margin-bottom: 10px;
+}
 span {
   font-size: 2rem;
   font-weight: bold;
+  margin-top: 10px;
 }
 .erro {
-  color: red;
+  color: #ff6b6b;
 }
 </style>
