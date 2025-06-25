@@ -1,5 +1,10 @@
 <script setup>
   import { reactive, watch } from 'vue';
+  import Title from './components/Title.vue';
+  import SetNumberOne from './components/SetNumberOne.vue';
+  import SetNumberTwo from './components/SetNumberTwo.vue';
+  import Operation from './components/Operation.vue';
+  import Result from './components/Result.vue';
 
   const estado = reactive({
     operacao: '-',
@@ -36,34 +41,15 @@
 
 <template>
   <div class="container">
-    <header>
-      <h1>Calcularadora Aritimetica</h1>
-    </header>
-    <div class="grupo-input">
-      <label for="num1">Primeiro Número</label>
-      <input type="number" id="num1" placeholder="Digite aqui o número" @keyup="getNumeroOne">
-    </div>
-    <div class="set-operacao">
-      <select @change="mudaOperacao" :value="estado.operacao">
-        <option value="-">Subtração</option>
-        <option value="+">Adição</option>
-        <option value="x">Mutiplicação</option>
-        <option value="/">Divisão</option>
-      </select>
-      <div class="view-operacao">
-        Operação selecionada: {{ estado.operacao }}
-      </div>
-    </div>
-    <div class="grupo-input">
-      <label for="num1">Segundo Número</label>
-      <input type="number" id="num2" placeholder="Digite aqui o número" @keyup="getNumeroTwo">
-    </div>
-    <h2>Resultado</h2>
-    <span :class="{ 'erro': typeof estado.resultado === 'string' }"> {{ estado.resultado }}</span>
+    <Title/>
+    <SetNumberOne :pega-numero1="getNumeroOne" />
+    <Operation :show-operation="mudaOperacao" :operation="estado.operacao"/>
+    <SetNumberTwo :pega-numero2="getNumeroTwo" />
+    <Result :results="estado.resultado" />
   </div>
 </template>
 
-<style scoped>
+<style>
 * {
   margin: 0;
   padding: 0;
